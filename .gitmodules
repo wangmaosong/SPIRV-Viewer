@@ -1,3 +1,0 @@
-[submodule "lib/shaderc"]
-	path = lib/shaderc
-	url = https://github.com/google/shaderc.git
