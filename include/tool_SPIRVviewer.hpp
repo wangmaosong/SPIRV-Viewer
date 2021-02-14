@@ -29,11 +29,21 @@
 #include <string>
 #include <memory>
 #include "tool_framework.hpp"
+#include <cross/spirv_hlsl.hpp>
 #include <cross/spirv_glsl.hpp>
+#include <cross/spirv_msl.hpp>
 #include <cross/spirv_common.hpp>
 #include <cross/spirv.hpp>
 
 #include <shaderc/shaderc.hpp>
+
+enum ShaderType
+{
+	HLSL_TYPE,
+	GLSL_TYPE,
+	MSL_TYPE,
+	UNKNOWN_TYPE
+};
 
 //store type, binary and sources
 struct shaderModule_t
@@ -52,7 +62,9 @@ struct shaderModule_t
 	};
 
 	std::vector<uint32_t>					binaryList = {};
+	std::string								hlslSource = {};
 	std::string								glslSource = {};
+	std::string								mslSource = {};
 	std::string								spirvSource = {};
 	spirv_cross::ShaderResources			shaderResources = {};
 	spirv_cross::CompilerGLSL::Options		shaderOptions = {};
@@ -67,6 +79,7 @@ class shaderTool_t : public ToolFramework
 {
 	std::string								fileName = "default.vert.spv";
 	std::vector<shaderModule_t>				shaderModules;
+	ShaderType								shaderType = HLSL_TYPE;
 
 	unsigned int currentModule = 0;
     // ---------------------- Names list UI helper ----------------------
@@ -79,7 +92,9 @@ class shaderTool_t : public ToolFramework
 	void DrawShaderTypes();
 	void DrawShaderReflection();
 	void DrawSPIRV(ImVec2 dimensions);
+	void DrawHLSL(ImVec2 dimensions);
 	void DrawGLSL(ImVec2 dimensions);
+	void DrawMSL(ImVec2 dimensions);
 
 	bool CheckShaderType(shaderModule_t& module, shaderc::AssemblyCompilationResult& result);
 	void DetermineShaderModuleType(shaderModule_t& module, spv::ExecutionModel model);
@@ -95,6 +110,9 @@ public:
     const char* getWindowTitle(void) override;
     void init(void) override;
     void render(int screenWidth, int screenHeight) override;
+	void SetShaderType(ShaderType type) { shaderType = type; }
+	ShaderType GetShaderType() { return shaderType; }
+
 	std::string resourcePath;
 	std::string binaryPath;
 };

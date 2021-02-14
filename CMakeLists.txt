@@ -24,7 +24,15 @@ elseif(UNIX)
 #set(NFD_SOURCES "${NFD_SOURCES}" "${LIB_SOURCES_DIR}/") //add linux nfd later
 endif()
 
-set (SPIRV_SOURCES "${LIB_SOURCES_DIR}/spirv_cross_parsed_ir" "${LIB_SOURCES_DIR}/spirv_cfg" "${LIB_SOURCES_DIR}/spirv_cpp" "${LIB_SOURCES_DIR}/spirv_cross" "${LIB_SOURCES_DIR}/spirv_glsl" "${LIB_SOURCES_DIR}/spirv_msl" "${LIB_SOURCES_DIR}/spirv_parser")
+set (SPIRV_SOURCES 
+	"${LIB_SOURCES_DIR}/spirv_cross_parsed_ir" 
+	"${LIB_SOURCES_DIR}/spirv_cfg" 
+	"${LIB_SOURCES_DIR}/spirv_cpp" 
+	"${LIB_SOURCES_DIR}/spirv_cross" 
+	"${LIB_SOURCES_DIR}/spirv_hlsl" 
+	"${LIB_SOURCES_DIR}/spirv_glsl" 
+	"${LIB_SOURCES_DIR}/spirv_msl" 
+	"${LIB_SOURCES_DIR}/spirv_parser")
 set (GLFW_SOURCES "./lib/include/GL/gl3w.c")
 
 set ( SOURCES "./source/main.cpp" "./source/tool_framework.cpp" "./source/tool_SPIRVviewer")
