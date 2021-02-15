@@ -109,7 +109,7 @@ static void setGUIStyle(void)
 int main(int numArgs, char* arguments[])
 {
 	framework = make_unique<shaderTool_t>();
-    framework->SetShaderType(GLSL_TYPE);
+    framework->SetShaderType(HLSL_TYPE);
 	//printf("%i \n", numArgs);
 	//printf("%s \n", arguments[0]);
 	//printf("%s \n", arguments[1]);

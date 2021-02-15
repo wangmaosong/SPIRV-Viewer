@@ -801,6 +801,76 @@ void shaderTool_t::load(std::string fileName)
 
 		shaderModules.push_back(module);
 	}
+	else if (IsAsciiSPIRVFile(fileName.c_str()))
+	{
+		ReadFromAsciiSPIRVFile(fileName.c_str());
+		shaderModule_t& module = shaderModules.back();
+
+		shaderc::Compiler compiler;
+		shaderc::SpvCompilationResult result = compiler.AssembleToSpv(shaderModules.back().spirvSource.c_str(), shaderModules.back().spirvSource.size());
+
+		std::vector<uint32_t> spv_result(result.cbegin(), result.cend());
+
+		switch (shaderType)
+		{
+			case HLSL_TYPE:
+			{
+				// HLSL
+				spirv_cross::CompilerHLSL hlsl(std::move(spv_result));
+				module.shaderResources = hlsl.get_shader_resources();
+				module.shaderOptions = hlsl.get_common_options();
+				module.shaderOptions.vulkan_semantics = true;
+				hlsl.set_common_options(module.shaderOptions);
+				module.hlslSource = hlsl.compile();
+
+				if (module.hlslSource.empty())
+				{
+					//if the SPIRV binary cannot be compiled to GLSL then quit here
+					return;
+				}
+				module.hlslSource += "\n";
+			}
+			break;
+			case GLSL_TYPE:
+			{
+				// GLSL
+				spirv_cross::CompilerGLSL glsl(std::move(spv_result));
+				module.shaderResources = glsl.get_shader_resources();
+				module.shaderOptions = glsl.get_common_options();
+				module.shaderOptions.vulkan_semantics = true;
+				glsl.set_common_options(module.shaderOptions);
+				module.glslSource = glsl.compile();
+
+				if (module.glslSource.empty())
+				{
+					//if the SPIRV binary cannot be compiled to GLSL then quit here
+					return;
+				}
+				module.glslSource += "\n";
+			}
+			break;
+			case MSL_TYPE:
+			{
+				// MSL
+				spirv_cross::CompilerMSL msl(std::move(spv_result));
+				module.shaderResources = msl.get_shader_resources();
+				module.shaderOptions = msl.get_common_options();
+				module.shaderOptions.vulkan_semantics = true;
+				msl.set_common_options(module.shaderOptions);
+				module.mslSource = msl.compile();
+
+				if (module.mslSource.empty())
+				{
+					//if the SPIRV binary cannot be compiled to GLSL then quit here
+					return;
+				}
+				module.mslSource += "\n";
+			}
+			break;
+			default:
+				break;
+		}
+	}
 	else
 	{
 		//if not then loop for each binary
@@ -1142,4 +1212,40 @@ void shaderTool_t::ReadVectorSPIRVFile(const char* fileName)
 			shaderModules.push_back(module);
 		}
 	}
+}
+
+bool shaderTool_t::IsAsciiSPIRVFile(const char* fileName)
+{
+	FILE* file = fopen(fileName, "r+");
+	char buff[1024];
+	if (file == nullptr)
+	{
+		return false;
+	}
+
+	fgets(buff, 1024, file);
+	if (strcmp(buff, "; SPIR-V\n") == 0)
+	{
+		fclose(file);
+		return true;
+	}
+
+	return false;
+}
+
+void shaderTool_t::ReadFromAsciiSPIRVFile(const char* fileName)
+{
+	FILE* file = fopen(fileName, "r+");
+	char buff[1024];
+	shaderModule_t module = {};
+	module.moduleType = shaderModule_t::moduleType_t::unknown;
+
+	while (!feof(file))
+	{
+		fgets(buff, 1024, file);
+		module.spirvSource += buff;
+	}
+
+	shaderModules.push_back(module);
+	fclose(file);
 }
