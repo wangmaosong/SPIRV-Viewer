@@ -608,14 +608,14 @@ void shaderTool_t::DrawMSL(ImVec2 dimensions)
 void shaderTool_t::render(int screenWidth, int screenHeight)
 {
 	ImGui::SetNextWindowPos(ImVec2(4, 4));
-	ImGui::SetNextWindowSize(ImVec2(screenWidth - 8, screenHeight - 8));
+	ImGui::SetNextWindowSize(ImVec2((float)screenWidth - 8, (float)screenHeight - 8));
 
 
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus |
 		ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_HorizontalScrollbar;
 	ImGui::Begin("Main window", nullptr, windowFlags);
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.5f));
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.8f));
 	//ImGui::ShowStyleEditor();
 	{
 		// --------------------------- Menu bar ---------------------------------
@@ -662,7 +662,7 @@ void shaderTool_t::render(int screenWidth, int screenHeight)
 
 		ImGui::EndChild(); // tests*/
 	}
-
+	ImGui::PopStyleColor();
 	ImGui::End();
 }
 
@@ -1126,18 +1126,19 @@ void shaderTool_t::DetermineShaderModuleType(shaderModule_t& module, spv::Execut
 
 std::vector<uint32_t> shaderTool_t::ReadSPIRVFile(const char* fileName)
 {
-	FILE* file = fopen(fileName, "r+");
+	FILE* file = nullptr;
+	fopen_s(&file, fileName, "r+");
 	if (file == nullptr)
 	{
 		return std::vector<uint32_t>();
 	}
 
 	fseek(file, 0, SEEK_END);
-	long int size = ftell(file);
+	size_t size = ftell(file);
 	fseek(file, 0, SEEK_SET);
 
 	unsigned int* inBuffer = (unsigned int*)malloc(size);
-	int bytesRead = fread(inBuffer, sizeof(unsigned int), size, file);
+	size_t bytesRead = fread(inBuffer, sizeof(unsigned int), size, file);
 
 	fclose(file);
 
@@ -1153,7 +1154,8 @@ std::vector<uint32_t> shaderTool_t::ReadSPIRVFile(const char* fileName)
 void shaderTool_t::ReadVectorSPIRVFile(const char* fileName)
 {
 	//get the number of binaries
-	FILE* file = fopen(fileName, "rb");
+	FILE* file = nullptr;
+	fopen_s(&file, fileName, "rb");
 
 	//move the cursor to the end
 	fseek(file, 0, SEEK_END);
@@ -1164,9 +1166,9 @@ void shaderTool_t::ReadVectorSPIRVFile(const char* fileName)
 	//get the total size of the file
 	//move the cursor back to the beginning
 
-	unsigned int magicalBullshit = 0;
-	unsigned int position = 0;
-	unsigned int numBinaries = 0;
+	size_t magicalBullshit = 0;
+	size_t position = 0;
+	size_t numBinaries = 0;
 	position = fread(&magicalBullshit, sizeof(uint32_t), 1, file);
 
 	if (magicalBullshit == 0x5be1273b)
@@ -1216,7 +1218,8 @@ void shaderTool_t::ReadVectorSPIRVFile(const char* fileName)
 
 bool shaderTool_t::IsAsciiSPIRVFile(const char* fileName)
 {
-	FILE* file = fopen(fileName, "r+");
+	FILE* file = nullptr;
+	fopen_s(&file, fileName, "r+");
 	char buff[1024];
 	if (file == nullptr)
 	{
@@ -1235,7 +1238,8 @@ bool shaderTool_t::IsAsciiSPIRVFile(const char* fileName)
 
 void shaderTool_t::ReadFromAsciiSPIRVFile(const char* fileName)
 {
-	FILE* file = fopen(fileName, "r+");
+	FILE* file = nullptr;
+	fopen_s(&file, fileName, "r+");
 	char buff[1024];
 	shaderModule_t module = {};
 	module.moduleType = shaderModule_t::moduleType_t::unknown;

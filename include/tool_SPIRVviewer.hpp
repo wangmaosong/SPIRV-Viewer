@@ -59,7 +59,7 @@ struct shaderModule_t
 		kernel,
 		unknown,
 		numStages,
-		invalid = -1
+		invalid = (unsigned int)-1
 	};
 
 	std::vector<uint32_t>					binaryList = {};
