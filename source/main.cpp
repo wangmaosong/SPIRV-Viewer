@@ -21,8 +21,9 @@
  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include <imgui/imgui.h>
-#include "imgui_impl_glfw_gl3.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 #include <stdio.h>
 #include <memory>
 #include <GL/gl3w.h>
@@ -48,8 +49,8 @@ static void setGUIStyle(void)
     style.ItemSpacing.x = 4; style.FramePadding.x = 6;
     style.Colors[ImGuiCol_Text]                  = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     style.Colors[ImGuiCol_TextDisabled]          = ImVec4(0.84f, 0.84f, 0.84f, 1.00f);
-    style.Colors[ImGuiCol_WindowBg]              = ImVec4(0.59f, 0.59f, 0.59f, 0.90f);
-    style.Colors[ImGuiCol_ChildWindowBg]         = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+    style.Colors[ImGuiCol_WindowBg]              = ImVec4(0.21f, 0.21f, 0.21f, 0.90f);
+    style.Colors[ImGuiCol_ChildBg]               = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
     style.Colors[ImGuiCol_PopupBg]               = ImVec4(0.05f, 0.05f, 0.10f, 0.90f);
     style.Colors[ImGuiCol_Border]                = ImVec4(0.70f, 0.70f, 0.70f, 0.65f);
     style.Colors[ImGuiCol_BorderShadow]          = ImVec4(0.15f, 0.15f, 0.15f, 0.09f);
@@ -64,7 +65,7 @@ static void setGUIStyle(void)
     style.Colors[ImGuiCol_ScrollbarGrab]         = ImVec4(0.00f, 0.00f, 0.00f, 0.15f);
     style.Colors[ImGuiCol_ScrollbarGrabHovered]  = ImVec4(0.82f, 0.82f, 0.82f, 0.67f);
     style.Colors[ImGuiCol_ScrollbarGrabActive]   = ImVec4(0.22f, 0.60f, 0.82f, 1.00f);
-    style.Colors[ImGuiCol_ComboBg]               = ImVec4(0.20f, 0.20f, 0.20f, 0.99f);
+    style.Colors[ImGuiCol_PopupBg]               = ImVec4(0.20f, 0.20f, 0.20f, 0.99f);
     style.Colors[ImGuiCol_CheckMark]             = ImVec4(0.90f, 0.90f, 0.90f, 0.50f);
     style.Colors[ImGuiCol_SliderGrab]            = ImVec4(1.00f, 1.00f, 1.00f, 0.30f);
     style.Colors[ImGuiCol_SliderGrabActive]      = ImVec4(0.22f, 0.60f, 0.82f, 1.00f);
@@ -74,41 +75,27 @@ static void setGUIStyle(void)
     style.Colors[ImGuiCol_Header]                = ImVec4(0.22f, 0.60f, 0.82f, 0.50f);
     style.Colors[ImGuiCol_HeaderHovered]         = ImVec4(0.22f, 0.60f, 0.82f, 0.70f);
     style.Colors[ImGuiCol_HeaderActive]          = ImVec4(0.22f, 0.60f, 0.82f, 1.00f);
-    style.Colors[ImGuiCol_Column]                = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
-    style.Colors[ImGuiCol_ColumnHovered]         = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-    style.Colors[ImGuiCol_ColumnActive]          = ImVec4(0.22f, 0.60f, 0.82f, 1.00f);
+    style.Colors[ImGuiCol_Separator]             = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
+    style.Colors[ImGuiCol_SeparatorHovered]      = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+    style.Colors[ImGuiCol_SeparatorActive]       = ImVec4(0.22f, 0.60f, 0.82f, 1.00f);
     style.Colors[ImGuiCol_ResizeGrip]            = ImVec4(1.00f, 1.00f, 1.00f, 0.30f);
     style.Colors[ImGuiCol_ResizeGripHovered]     = ImVec4(1.00f, 1.00f, 1.00f, 0.60f);
     style.Colors[ImGuiCol_ResizeGripActive]      = ImVec4(1.00f, 1.00f, 1.00f, 0.90f);
-    style.Colors[ImGuiCol_CloseButton]           = ImVec4(0.53f, 0.53f, 0.53f, 1.00f);
-    style.Colors[ImGuiCol_CloseButtonHovered]    = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
-    style.Colors[ImGuiCol_CloseButtonActive]     = ImVec4(0.22f, 0.60f, 0.82f, 1.00f);
     style.Colors[ImGuiCol_PlotLines]             = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     style.Colors[ImGuiCol_PlotLinesHovered]      = ImVec4(1.00f, 0.65f, 0.22f, 0.00f);
     style.Colors[ImGuiCol_PlotHistogram]         = ImVec4(0.93f, 0.52f, 0.02f, 0.00f);
     style.Colors[ImGuiCol_PlotHistogramHovered]  = ImVec4(1.00f, 0.92f, 0.82f, 0.00f);
     style.Colors[ImGuiCol_TextSelectedBg]        = ImVec4(0.22f, 0.60f, 0.82f, 1.00f);
-    style.Colors[ImGuiCol_ModalWindowDarkening]  = ImVec4(0.20f, 0.20f, 0.20f, 0.22f);
-
-    ImFontConfig cfg;
-    memset(&cfg, 0, sizeof(ImFontConfig));
-    cfg.OversampleH = 2;
-    cfg.OversampleV = 2;
-    cfg.PixelSnapH = true;
-    cfg.GlyphExtraSpacing.x = 0.1f;
-    cfg.GlyphExtraSpacing.y = 0.0f;
+    style.Colors[ImGuiCol_ModalWindowDimBg]      = ImVec4(0.20f, 0.20f, 0.20f, 0.22f);
 
     ImGuiIO& io = ImGui::GetIO();
-	io.IniFilename = NULL;
-	//printf("%s \n", framework->resourcePath);
-    io.Fonts->AddFontFromFileTTF( std::string(framework->resourcePath + "DejaVuSansMono.ttf").c_str(), 15, &cfg);
-	//io.Fonts->AddFontDefault();
+    io.Fonts->AddFontFromFileTTF( std::string(framework->resourcePath + "DejaVuSansMono.ttf").c_str(), 15);
 }
 
 int main(int numArgs, char* arguments[])
 {
 	framework = make_unique<shaderTool_t>();
-    framework->SetShaderType(HLSL_TYPE);
+    framework->SetShaderType(GLSL_TYPE);
 	//printf("%i \n", numArgs);
 	//printf("%s \n", arguments[0]);
 	//printf("%s \n", arguments[1]);
@@ -145,10 +132,14 @@ int main(int numArgs, char* arguments[])
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     GLFWwindow* window = glfwCreateWindow(1600, 900, framework->getWindowTitle(), NULL, NULL);
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1); // Enable vsync
     gl3wInit();
 
-    // Setup ImGui binding
-    ImGui_ImplGlfwGL3_Init(window, true);
+    ImGui::CreateContext();
+    const char* glsl_version = "#version 130";
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    //ImGui::StyleColorsDark();
     setGUIStyle();
     framework->init();
 
@@ -158,7 +149,9 @@ int main(int numArgs, char* arguments[])
 
     while (!glfwWindowShouldClose(window)) {
         glfwWaitEvents();
-        ImGui_ImplGlfwGL3_NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
         glfwGetFramebufferSize(window, &fbSizeW, &fbSizeH);
 
         framework->render(fbSizeW, fbSizeH);
@@ -166,14 +159,16 @@ int main(int numArgs, char* arguments[])
             showDebugTestWindow = true;
         }
         if (showDebugTestWindow) {
-            ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-            ImGui::ShowTestWindow(&showDebugTestWindow);
+            ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
+            ImGui::ShowDemoWindow(&showDebugTestWindow);
         }
 
         glViewport(0, 0, fbSizeW, fbSizeH);
         glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        ImGui::EndFrame();
         glfwSwapBuffers(window);
     }
 

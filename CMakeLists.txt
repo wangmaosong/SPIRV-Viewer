@@ -16,7 +16,14 @@ set (GLFW_INCLUDE_DIR "./lib/include/glfw")
 set (SOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/source/")
 set (LIB_SOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/src/")
 
-set (IMGUI_SOURCES "${IMGUI_INCLUDE_DIR}/imgui.cpp" "${SOURCES_DIR}/imgui_draw.cpp" "${SOURCES_DIR}/imgui_demo.cpp" "${SOURCES_DIR}/imgui_impl_glfw_gl3")
+set (IMGUI_SOURCES 
+	"${IMGUI_INCLUDE_DIR}/imgui.cpp" 
+	"${SOURCES_DIR}/imgui/imgui_draw.cpp" 
+	"${SOURCES_DIR}/imgui/imgui_demo.cpp"
+	"${SOURCES_DIR}/imgui/imgui_tables.cpp"
+	"${SOURCES_DIR}/imgui/imgui_widgets.cpp"
+	"${SOURCES_DIR}/imgui/imgui_impl_glfw"
+	"${SOURCES_DIR}/imgui/backends/imgui_impl_opengl3")
 
 if(WIN32)
 set(NFD_SOURCES "${LIB_SOURCES_DIR}nfd_common.c" "${LIB_SOURCES_DIR}/nfd_win.cpp")
@@ -49,7 +56,11 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_MODULE_PATH}
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake/find")
 
-set (HEADERS "${INCLUDE_DIR}/tool_framework.hpp" "${INCLUDE_DIR}/resource.h" "${INCLUDE_DIR}/tool_SPIRVviewer.hpp" "${INCLUDE_DIR}/imgui_impl_glfw_gl3")
+set (HEADERS 
+	"${INCLUDE_DIR}/tool_framework.hpp" 
+	"${INCLUDE_DIR}/resource.h" 
+	"${INCLUDE_DIR}/tool_SPIRVviewer.hpp" 
+	"${INCLUDE_DIR}/imgui_impl_glfw")
 
 set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 add_subdirectory("${LIB_DIR}/shaderc" EXCLUDE_FROM_ALL)

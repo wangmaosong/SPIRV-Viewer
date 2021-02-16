@@ -544,7 +544,7 @@ void shaderTool_t::DrawSPIRV(ImVec2 dimensions)
 	{
 		ImGui::BeginChild("SPIRV", dimensions, true, ImGuiWindowFlags_NoScrollbar);
 		ImGui::SetWindowSize("SPIRV", dimensions);
-		ImGui::SetScrollX(20.0f);
+		ImGui::SetScrollX(10.0f);
 
 		//ImGui::SetScrollY(10.0f);
 		ImGui::TextColored(favColor, "%s:", "\t SPIRV source code");
@@ -562,7 +562,7 @@ void shaderTool_t::DrawHLSL(ImVec2 dimensions)
 	if (!shaderModules.empty())
 	{
 		ImGui::BeginChild("HLSL", dimensions, true, ImGuiWindowFlags_NoScrollbar);
-		ImGui::SetScrollX(20.0f);
+		ImGui::SetScrollX(10.0f);
 
 		//ImGui::SetScrollY(10.0f);
 		ImGui::TextColored(favColor, "%s:", "\t HLSL source code");
@@ -578,7 +578,7 @@ void shaderTool_t::DrawGLSL(ImVec2 dimensions)
 	if (!shaderModules.empty())
 	{
 		ImGui::BeginChild("GLSL", dimensions, true, ImGuiWindowFlags_NoScrollbar);
-		ImGui::SetScrollX(20.0f);
+		ImGui::SetScrollX(10.0f);
 		
 		//ImGui::SetScrollY(10.0f);
 		ImGui::TextColored(favColor, "%s:", "\t GLSL source code");
@@ -594,7 +594,7 @@ void shaderTool_t::DrawMSL(ImVec2 dimensions)
 	if (!shaderModules.empty())
 	{
 		ImGui::BeginChild("MSL", dimensions, true, ImGuiWindowFlags_NoScrollbar);
-		ImGui::SetScrollX(20.0f);
+		ImGui::SetScrollX(10.0f);
 
 		//ImGui::SetScrollY(10.0f);
 		ImGui::TextColored(favColor, "%s:", "\t MSL source code");
@@ -641,7 +641,7 @@ void shaderTool_t::render(int screenWidth, int screenHeight)
 		ImGui::BeginChild("test", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar);
 		ImVec2 windowDimensions = ImGui::GetWindowSize();
 		ImVec2 newDimensions = ImVec2(windowDimensions.x / 2, windowDimensions.y);
-		ImGui::SetScrollX(20.0f);
+		ImGui::SetScrollX(10.0f);
 		// --------------------------- Second column : SPIRV ---------------------------------
 		DrawSPIRV(newDimensions);
 		// --------------------------- Third column : HLSL GLSL MSL ---------------------------------
