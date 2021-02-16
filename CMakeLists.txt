@@ -59,8 +59,7 @@ set(CMAKE_MODULE_PATH
 set (HEADERS 
 	"${INCLUDE_DIR}/tool_framework.hpp" 
 	"${INCLUDE_DIR}/resource.h" 
-	"${INCLUDE_DIR}/tool_SPIRVviewer.hpp" 
-	"${INCLUDE_DIR}/imgui_impl_glfw")
+	"${INCLUDE_DIR}/tool_SPIRVviewer.hpp")
 
 set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 add_subdirectory("${LIB_DIR}/shaderc" EXCLUDE_FROM_ALL)
