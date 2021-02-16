@@ -81,7 +81,7 @@ class shaderTool_t : public ToolFramework
 	std::string								fileName = "default.vert.spv";
 	std::vector<shaderModule_t>				shaderModules;
 	ShaderType								shaderType = GLSL_TYPE;
-	const char*								currentItem = "";
+	const char*								currentItem = "GLSL source code";
 	const char*								entityItems[3] = { "GLSL source code","HLSL source code","MSL source code" };
 
 	unsigned int currentModule = 0;

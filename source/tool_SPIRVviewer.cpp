@@ -623,6 +623,7 @@ void shaderTool_t::Render(int screenWidth, int screenHeight)
 		DrawSPIRV(newDimensions);
 		ImGui::EndChild();
 		ImGui::SameLine();
+
 		// ------------------------ Third column : GLSL HLSL MSL -----------------------------
 		ImGui::BeginChild("Target", newDimensions, true, ImGuiWindowFlags_NoScrollbar);
 		if (ImGui::BeginCombo("", currentItem)) {
@@ -645,7 +646,7 @@ void shaderTool_t::Render(int screenWidth, int screenHeight)
 			else
 				shaderType = UNKNOWN_TYPE;
 		}
-
+		ImGui::Separator();
 		switch (shaderType)
 		{
 		case HLSL_TYPE:
@@ -695,9 +696,10 @@ void shaderTool_t::Load(std::string fileName)
 	{
 		//if it's just a regular SPIRV file then continue as normal
 		shaderModule_t module = {};
+		std::vector<uint32_t> spv_result(std::move(ReadSPIRVFile(fileName.c_str())));
 
 		// GLSL
-		spirv_cross::CompilerGLSL glsl(std::move(ReadSPIRVFile(fileName.c_str())));
+		spirv_cross::CompilerGLSL glsl(spv_result);
 		module.shaderResources = glsl.get_shader_resources();
 		module.shaderOptions = glsl.get_common_options();
 		module.shaderOptions.vulkan_semantics = true;
@@ -708,7 +710,7 @@ void shaderTool_t::Load(std::string fileName)
 		DetermineShaderModuleType(module, glsl.get_execution_model());
 
 		// HLSL
-		spirv_cross::CompilerHLSL hlsl(std::move(ReadSPIRVFile(fileName.c_str())));
+		spirv_cross::CompilerHLSL hlsl(spv_result);
 		module.shaderResources = hlsl.get_shader_resources();
 		module.shaderOptions = hlsl.get_common_options();
 		module.shaderOptions.vulkan_semantics = true;
@@ -719,7 +721,7 @@ void shaderTool_t::Load(std::string fileName)
 			module.hlslSource += "\n";
 
 		// MSL
-		spirv_cross::CompilerMSL msl(std::move(ReadSPIRVFile(fileName.c_str())));
+		spirv_cross::CompilerMSL msl(spv_result);
 		module.shaderResources = msl.get_shader_resources();
 		module.shaderOptions = msl.get_common_options();
 		module.shaderOptions.vulkan_semantics = true;
