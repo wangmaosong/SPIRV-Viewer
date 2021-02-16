@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2016 UAA Software
+ Copyright (c) 2021 UAA Software
  
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -95,7 +95,6 @@ static void setGUIStyle(void)
 int main(int numArgs, char* arguments[])
 {
 	framework = make_unique<shaderTool_t>();
-    framework->SetShaderType(GLSL_TYPE);
 	//printf("%i \n", numArgs);
 	//printf("%s \n", arguments[0]);
 	//printf("%s \n", arguments[1]);
@@ -106,7 +105,6 @@ int main(int numArgs, char* arguments[])
 			//store the binary path IF the binary was double clicked
 			framework->binaryPath = arguments[1];
 		}
-
 		else
 		{
 			//get the exe Path
@@ -130,7 +128,7 @@ int main(int numArgs, char* arguments[])
     glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* window = glfwCreateWindow(1600, 900, framework->getWindowTitle(), NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1600, 900, framework->GetWindowTitle(), NULL, NULL);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
     gl3wInit();
@@ -141,7 +139,7 @@ int main(int numArgs, char* arguments[])
     ImGui_ImplOpenGL3_Init(glsl_version);
     //ImGui::StyleColorsDark();
     setGUIStyle();
-    framework->init();
+    framework->Init();
 
     // Main loop.
     int fbSizeW, fbSizeH;
@@ -154,7 +152,7 @@ int main(int numArgs, char* arguments[])
         ImGui::NewFrame();
         glfwGetFramebufferSize(window, &fbSizeW, &fbSizeH);
 
-        framework->render(fbSizeW, fbSizeH);
+        framework->Render(fbSizeW, fbSizeH);
         if (glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT)) {
             showDebugTestWindow = true;
         }

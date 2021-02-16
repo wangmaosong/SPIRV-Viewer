@@ -9,16 +9,16 @@ ToolFramework::~ToolFramework()
 {
 }
 
-const char* ToolFramework::getWindowTitle(void)
+const char* ToolFramework::GetWindowTitle(void)
 {
     return "VK ToolFramework";
 }
 
-void ToolFramework::init(void)
+void ToolFramework::Init(void)
 {
 }
 
-void ToolFramework::render(int screenWidth, int screenHeight)
+void ToolFramework::Render(int screenWidth, int screenHeight)
 {
 }
 

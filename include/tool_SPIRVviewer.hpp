@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2016 UAA Software
+ Copyright (c) 2021 UAA Software
  
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -80,12 +80,14 @@ class shaderTool_t : public ToolFramework
 {
 	std::string								fileName = "default.vert.spv";
 	std::vector<shaderModule_t>				shaderModules;
-	ShaderType								shaderType = HLSL_TYPE;
+	ShaderType								shaderType = GLSL_TYPE;
+	const char*								currentItem = "";
+	const char*								entityItems[3] = { "GLSL source code","HLSL source code","MSL source code" };
 
 	unsigned int currentModule = 0;
     // ---------------------- Names list UI helper ----------------------
 
-    int displayNamedList(const char* title, const char* listboxName, const char* objname, const char* abbrev,
+    int DisplayNamedList(const char* title, const char* listboxName, const char* objname, const char* abbrev,
                          std::vector<const char*> listItems, int& activeItem, int listSize,
                          char *newNameBuffer, char *renameBuffer, bool *listChanged = nullptr);
 	void DrawMenu();
@@ -100,8 +102,8 @@ class shaderTool_t : public ToolFramework
 	bool CheckShaderType(shaderModule_t& module, shaderc::AssemblyCompilationResult& result);
 	void DetermineShaderModuleType(shaderModule_t& module, spv::ExecutionModel model);
 
-	void save(std::string fileName);
-	void load(std::string fileName);
+	void Save(std::string fileName);
+	void Load(std::string fileName);
 
 	std::vector<uint32_t> ReadSPIRVFile(const char* fileName);
 
@@ -111,9 +113,9 @@ class shaderTool_t : public ToolFramework
 	void ReadFromAsciiSPIRVFile(const char* fileName);
 
 public:
-    const char* getWindowTitle(void) override;
-    void init(void) override;
-    void render(int screenWidth, int screenHeight) override;
+    const char* GetWindowTitle(void) override;
+    void Init(void) override;
+    void Render(int screenWidth, int screenHeight) override;
 	void SetShaderType(ShaderType type) { shaderType = type; }
 	ShaderType GetShaderType() { return shaderType; }
 

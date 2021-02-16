@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2016 UAA Software
+ Copyright (c) 2021 UAA Software
  
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -93,7 +93,7 @@ static void DisplayAboutWindow(void)
     if (ImGui::BeginPopupModal(popupString.c_str(), &displayAboutWindow, ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::TextColored(ImVec4(0.067f, 0.765f, 0.941f, 1.0f), "SPIRV Viewer" 
                            "                                                                                              ");
-        ImGui::TextColored(ImVec4(0.75f, 0.75f, 0.75f, 1.0f), "(c) Copyright 2016 UAA Software");
+        ImGui::TextColored(ImVec4(0.75f, 0.75f, 0.75f, 1.0f), "(c) Copyright 2021 UAA Software");
         ImGui::TextColored(ImVec4(0.75f, 0.75f, 0.75f, 1.0f), "Programming by Ziyad Barakat");
         ImGui::Spacing(); ImGui::Spacing();
         ImGui::TextWrapped(
@@ -172,17 +172,17 @@ inline bool EndsWith(std::string const & value, std::string const & ending)
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
 
-const char* shaderTool_t::getWindowTitle()
+const char* shaderTool_t::GetWindowTitle()
 {
     return "Shader Tool";
 }
 
-void shaderTool_t::init(void)
+void shaderTool_t::Init(void)
 {
 	//if the shader binary has already been establish via double clicking in windows explorer
 	if (!binaryPath.empty())
 	{
-		load(binaryPath);
+		Load(binaryPath);
 	}
 }
 
@@ -197,7 +197,7 @@ void shaderTool_t::DrawMenu()
 			if (ImGui::MenuItem("Open..", NULL, nullptr)) {
 				string p;
 				if (openDialog(p, nullptr)) {
-					this->load(p);
+					this->Load(p);
 				}
 			}
 			/*ImGui::Separator();
@@ -230,7 +230,7 @@ void shaderTool_t::DrawMenu()
 void shaderTool_t::DrawMeta()
 {
 	ImGui::TextColored(ImVec4(0.067f, 0.765f, 0.941f, 1.0f), "SPIRV-GLSL shader Editor");
-	ImGui::TextColored(ImVec4(0.75f, 0.75f, 0.75f, 1.0f), "(c) Copyright 2016 UAA Software");
+	ImGui::TextColored(ImVec4(0.75f, 0.75f, 0.75f, 1.0f), "(c) Copyright 2021 UAA Software");
 	ImGui::Spacing(); ImGui::Spacing();
 }
 
@@ -542,17 +542,13 @@ void shaderTool_t::DrawSPIRV(ImVec2 dimensions)
 {
 	if (!shaderModules.empty())
 	{
-		ImGui::BeginChild("SPIRV", dimensions, true, ImGuiWindowFlags_NoScrollbar);
 		ImGui::SetWindowSize("SPIRV", dimensions);
 		ImGui::SetScrollX(10.0f);
-
-		//ImGui::SetScrollY(10.0f);
 		ImGui::TextColored(favColor, "%s:", "\t SPIRV source code");
 		ImGui::Separator();
 		//add open in in editor button and open in vim button
 		ImGui::InputTextMultiline("##", (char*)shaderModules[currentModule].spirvSource.c_str(), shaderModules[currentModule].spirvSource.size() * sizeof(char), dimensions, ImGuiInputTextFlags_ReadOnly);
 
-		ImGui::EndChild();
 		ImGui::SameLine();
 	}
 }
@@ -561,15 +557,8 @@ void shaderTool_t::DrawHLSL(ImVec2 dimensions)
 {
 	if (!shaderModules.empty())
 	{
-		ImGui::BeginChild("HLSL", dimensions, true, ImGuiWindowFlags_NoScrollbar);
 		ImGui::SetScrollX(10.0f);
-
-		//ImGui::SetScrollY(10.0f);
-		ImGui::TextColored(favColor, "%s:", "\t HLSL source code");
-		ImGui::Separator();
 		ImGui::InputTextMultiline("##", (char*)shaderModules[currentModule].hlslSource.c_str(), shaderModules[currentModule].hlslSource.size() * sizeof(char), dimensions, ImGuiInputTextFlags_ReadOnly);
-
-		ImGui::EndChild();
 	}
 }
 
@@ -577,15 +566,8 @@ void shaderTool_t::DrawGLSL(ImVec2 dimensions)
 {
 	if (!shaderModules.empty())
 	{
-		ImGui::BeginChild("GLSL", dimensions, true, ImGuiWindowFlags_NoScrollbar);
 		ImGui::SetScrollX(10.0f);
-		
-		//ImGui::SetScrollY(10.0f);
-		ImGui::TextColored(favColor, "%s:", "\t GLSL source code");
-		ImGui::Separator();
 		ImGui::InputTextMultiline("##", (char*)shaderModules[currentModule].glslSource.c_str(), shaderModules[currentModule].glslSource.size() * sizeof(char), dimensions, ImGuiInputTextFlags_ReadOnly);
-		
-		ImGui::EndChild();
 	}
 }
 
@@ -593,19 +575,12 @@ void shaderTool_t::DrawMSL(ImVec2 dimensions)
 {
 	if (!shaderModules.empty())
 	{
-		ImGui::BeginChild("MSL", dimensions, true, ImGuiWindowFlags_NoScrollbar);
 		ImGui::SetScrollX(10.0f);
-
-		//ImGui::SetScrollY(10.0f);
-		ImGui::TextColored(favColor, "%s:", "\t MSL source code");
-		ImGui::Separator();
 		ImGui::InputTextMultiline("##", (char*)shaderModules[currentModule].mslSource.c_str(), shaderModules[currentModule].mslSource.size() * sizeof(char), dimensions, ImGuiInputTextFlags_ReadOnly);
-
-		ImGui::EndChild();
 	}
 }
 
-void shaderTool_t::render(int screenWidth, int screenHeight)
+void shaderTool_t::Render(int screenWidth, int screenHeight)
 {
 	ImGui::SetNextWindowPos(ImVec2(4, 4));
 	ImGui::SetNextWindowSize(ImVec2((float)screenWidth - 8, (float)screenHeight - 8));
@@ -642,9 +617,35 @@ void shaderTool_t::render(int screenWidth, int screenHeight)
 		ImVec2 windowDimensions = ImGui::GetWindowSize();
 		ImVec2 newDimensions = ImVec2(windowDimensions.x / 2, windowDimensions.y);
 		ImGui::SetScrollX(10.0f);
+
 		// --------------------------- Second column : SPIRV ---------------------------------
+		ImGui::BeginChild("SPIRV", newDimensions, true, ImGuiWindowFlags_NoScrollbar);
 		DrawSPIRV(newDimensions);
-		// --------------------------- Third column : HLSL GLSL MSL ---------------------------------
+		ImGui::EndChild();
+		ImGui::SameLine();
+		// ------------------------ Third column : GLSL HLSL MSL -----------------------------
+		ImGui::BeginChild("Target", newDimensions, true, ImGuiWindowFlags_NoScrollbar);
+		if (ImGui::BeginCombo("", currentItem)) {
+			for (int n = 0; n < IM_ARRAYSIZE(entityItems); n++) {
+				bool is_selected = (currentItem == entityItems[n]);
+				if (ImGui::Selectable(entityItems[n], is_selected)) { //ImGui::Selectable()显示可选择的选项
+					currentItem = entityItems[n];
+				}
+			}
+			ImGui::EndCombo();
+		}
+		if (currentItem != nullptr) {
+			std::string debug_currentItem(currentItem);
+			if (debug_currentItem == "GLSL source code")
+				shaderType = GLSL_TYPE;
+			else if (debug_currentItem == "HLSL source code")
+				shaderType = HLSL_TYPE;
+			else if (debug_currentItem == "MSL source code")
+				shaderType = MSL_TYPE;
+			else
+				shaderType = UNKNOWN_TYPE;
+		}
+
 		switch (shaderType)
 		{
 		case HLSL_TYPE:
@@ -659,6 +660,7 @@ void shaderTool_t::render(int screenWidth, int screenHeight)
 		default:
 			break;
 		}
+		ImGui::EndChild();
 
 		ImGui::EndChild(); // tests*/
 	}
@@ -666,7 +668,7 @@ void shaderTool_t::render(int screenWidth, int screenHeight)
 	ImGui::End();
 }
 
-void shaderTool_t::save(std::string fileName)
+void shaderTool_t::Save(std::string fileName)
 {
     if (fileName.length() <= 0) return;
     if (!EndsWith(fileName, ".vkpipeline.json")) {
@@ -676,53 +678,9 @@ void shaderTool_t::save(std::string fileName)
             fileName += ".vkpipeline.json";
         }
     }
-
-/*
-    Json::Value value;
-    value["num_layouts"] = m_layouts.size();  
-    for (auto& playout: m_layouts) {
-        Json::Value vplayout;
-        vplayout["name"] = playout.name;
-        auto setIdx = 0;
-        for (auto& dset : playout.descsets) {
-            Json::Value vdset;
-            vdset["set_index"] = setIdx++;
-            for (auto& dl : dset.dlayouts) {
-                Json::Value vdl = this->findDescLayoutByPtr(dl);
-                vdset["desc_layouts"].append(vdl);
-            }
-            vplayout["desc_sets"].append(vdset);
-        }
-        value["layouts"].append(vplayout);
-    }
-    value["num_sets"] = m_dsets.size();  
-    for (auto& dset: m_dsets) {
-        Json::Value vdset;
-        vdset = dset;
-        value["sets"].append(vdset);
-    }
-    value["num_bindings"] = m_dlayouts.size();  
-    for (auto& binding: m_dlayouts) {
-        Json::Value vbinding;
-        vbinding["name"] = binding->name;
-        vbinding["type"] = binding->typeIdx;
-        vbinding["typeName"] = shaderModuleTypes[binding->typeIdx];
-        vbinding["data"] = binding->data;
-        vbinding["comment"] = binding->comment;
-        vbinding["stageFlagBits"] = binding->stageFlagBits;
-        value["bindings"].append(vbinding);
-    }
-
-    ofstream ofs;
-    ofs.open(fileName.c_str(), std::ofstream::out);
-    Json::StyledStreamWriter writer;
-    writer.write(ofs, value);
-    ofs.close();
-
-    m_filename = fileName;*/
 }
 
-void shaderTool_t::load(std::string fileName)
+void shaderTool_t::Load(std::string fileName)
 {
 	shaderModules.clear();
 	if (fileName.length() <= 0)
@@ -745,59 +703,31 @@ void shaderTool_t::load(std::string fileName)
 		module.shaderOptions.vulkan_semantics = true;
 		glsl.set_common_options(module.shaderOptions);
 		module.glslSource = glsl.compile();
-
-		if (module.glslSource.empty())
-		{
-			//if the SPIRV binary cannot be compiled to GLSL then quit here
-			return;
-		}
-		module.glslSource += "\n";
+		if (!module.glslSource.empty())
+			module.glslSource += "\n";
 		DetermineShaderModuleType(module, glsl.get_execution_model());
 
-		if (shaderType != GLSL_TYPE)
-		{
-			switch (shaderType)
-			{
-			case HLSL_TYPE:
-			{
-				// HLSL
-				spirv_cross::CompilerHLSL hlsl(std::move(ReadSPIRVFile(fileName.c_str())));
-				module.shaderResources = hlsl.get_shader_resources();
-				module.shaderOptions = hlsl.get_common_options();
-				module.shaderOptions.vulkan_semantics = true;
-				hlsl.set_common_options(module.shaderOptions);
-				module.hlslSource = hlsl.compile();
+		// HLSL
+		spirv_cross::CompilerHLSL hlsl(std::move(ReadSPIRVFile(fileName.c_str())));
+		module.shaderResources = hlsl.get_shader_resources();
+		module.shaderOptions = hlsl.get_common_options();
+		module.shaderOptions.vulkan_semantics = true;
+		hlsl.set_common_options(module.shaderOptions);
+		module.hlslSource = hlsl.compile();
 
-				if (module.hlslSource.empty())
-				{
-					//if the SPIRV binary cannot be compiled to GLSL then quit here
-					return;
-				}
-				module.hlslSource += "\n";
-			}
-			break;
-			case MSL_TYPE:
-			{
-				// MSL
-				spirv_cross::CompilerMSL msl(std::move(ReadSPIRVFile(fileName.c_str())));
-				module.shaderResources = msl.get_shader_resources();
-				module.shaderOptions = msl.get_common_options();
-				module.shaderOptions.vulkan_semantics = true;
-				msl.set_common_options(module.shaderOptions);
-				module.mslSource = msl.compile();
+		if (!module.hlslSource.empty())
+			module.hlslSource += "\n";
 
-				if (module.mslSource.empty())
-				{
-					//if the SPIRV binary cannot be compiled to GLSL then quit here
-					return;
-				}
-				module.mslSource += "\n";
-			}
-			break;
-			default:
-				break;
-			}
-		}
+		// MSL
+		spirv_cross::CompilerMSL msl(std::move(ReadSPIRVFile(fileName.c_str())));
+		module.shaderResources = msl.get_shader_resources();
+		module.shaderOptions = msl.get_common_options();
+		module.shaderOptions.vulkan_semantics = true;
+		msl.set_common_options(module.shaderOptions);
+		module.mslSource = msl.compile();
+
+		if (!module.mslSource.empty())
+			module.mslSource += "\n";
 
 		shaderModules.push_back(module);
 	}
@@ -808,68 +738,28 @@ void shaderTool_t::load(std::string fileName)
 
 		shaderc::Compiler compiler;
 		shaderc::SpvCompilationResult result = compiler.AssembleToSpv(shaderModules.back().spirvSource.c_str(), shaderModules.back().spirvSource.size());
-
 		std::vector<uint32_t> spv_result(result.cbegin(), result.cend());
 
-		switch (shaderType)
-		{
-			case HLSL_TYPE:
-			{
-				// HLSL
-				spirv_cross::CompilerHLSL hlsl(std::move(spv_result));
-				module.shaderResources = hlsl.get_shader_resources();
-				module.shaderOptions = hlsl.get_common_options();
-				module.shaderOptions.vulkan_semantics = true;
-				hlsl.set_common_options(module.shaderOptions);
-				module.hlslSource = hlsl.compile();
+		// GLSL
+		spirv_cross::CompilerGLSL glsl(spv_result);
+		module.shaderResources = glsl.get_shader_resources();
+		module.glslSource = glsl.compile();
+		if (!module.glslSource.empty())
+			module.glslSource += "\n";
 
-				if (module.hlslSource.empty())
-				{
-					//if the SPIRV binary cannot be compiled to GLSL then quit here
-					return;
-				}
-				module.hlslSource += "\n";
-			}
-			break;
-			case GLSL_TYPE:
-			{
-				// GLSL
-				spirv_cross::CompilerGLSL glsl(std::move(spv_result));
-				module.shaderResources = glsl.get_shader_resources();
-				module.shaderOptions = glsl.get_common_options();
-				module.shaderOptions.vulkan_semantics = true;
-				glsl.set_common_options(module.shaderOptions);
-				module.glslSource = glsl.compile();
+		// HLSL
+		spirv_cross::CompilerHLSL hlsl(spv_result);
+		module.shaderResources = hlsl.get_shader_resources();
+		module.hlslSource = hlsl.compile();
+		if (!module.hlslSource.empty())
+			module.hlslSource += "\n";
 
-				if (module.glslSource.empty())
-				{
-					//if the SPIRV binary cannot be compiled to GLSL then quit here
-					return;
-				}
-				module.glslSource += "\n";
-			}
-			break;
-			case MSL_TYPE:
-			{
-				// MSL
-				spirv_cross::CompilerMSL msl(std::move(spv_result));
-				module.shaderResources = msl.get_shader_resources();
-				module.shaderOptions = msl.get_common_options();
-				module.shaderOptions.vulkan_semantics = true;
-				msl.set_common_options(module.shaderOptions);
-				module.mslSource = msl.compile();
-
-				if (module.mslSource.empty())
-				{
-					//if the SPIRV binary cannot be compiled to GLSL then quit here
-					return;
-				}
-				module.mslSource += "\n";
-			}
-			break;
-			default:
-				break;
-		}
+		// MSL
+		spirv_cross::CompilerMSL msl(spv_result);
+		module.shaderResources = msl.get_shader_resources();
+		module.mslSource = msl.compile();
+		if (!module.mslSource.empty())
+			module.mslSource += "\n";
 	}
 	else
 	{
@@ -1129,9 +1019,7 @@ std::vector<uint32_t> shaderTool_t::ReadSPIRVFile(const char* fileName)
 	FILE* file = nullptr;
 	fopen_s(&file, fileName, "r+");
 	if (file == nullptr)
-	{
 		return std::vector<uint32_t>();
-	}
 
 	fseek(file, 0, SEEK_END);
 	size_t size = ftell(file);
@@ -1155,7 +1043,9 @@ void shaderTool_t::ReadVectorSPIRVFile(const char* fileName)
 {
 	//get the number of binaries
 	FILE* file = nullptr;
-	fopen_s(&file, fileName, "rb");
+	fopen_s(&file, fileName, "rb+");
+	if (file == nullptr)
+		return;
 
 	//move the cursor to the end
 	fseek(file, 0, SEEK_END);
@@ -1214,18 +1104,17 @@ void shaderTool_t::ReadVectorSPIRVFile(const char* fileName)
 			shaderModules.push_back(module);
 		}
 	}
+	fclose(file);
 }
 
 bool shaderTool_t::IsAsciiSPIRVFile(const char* fileName)
 {
 	FILE* file = nullptr;
 	fopen_s(&file, fileName, "r+");
-	char buff[1024];
 	if (file == nullptr)
-	{
 		return false;
-	}
 
+	char buff[1024];
 	fgets(buff, 1024, file);
 	if (strcmp(buff, "; SPIR-V\n") == 0)
 	{
@@ -1240,6 +1129,9 @@ void shaderTool_t::ReadFromAsciiSPIRVFile(const char* fileName)
 {
 	FILE* file = nullptr;
 	fopen_s(&file, fileName, "r+");
+	if (file == nullptr)
+		return;
+
 	char buff[1024];
 	shaderModule_t module = {};
 	module.moduleType = shaderModule_t::moduleType_t::unknown;

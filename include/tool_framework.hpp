@@ -36,9 +36,9 @@ public:
     ToolFramework();
     virtual ~ToolFramework();
 
-    virtual const char* getWindowTitle(void);
-    virtual void init(void);
-    virtual void render(int screenWidth, int screenHeight);
+    virtual const char* GetWindowTitle(void);
+    virtual void Init(void);
+    virtual void Render(int screenWidth, int screenHeight);
 };
 
 #endif // _TOOL_FRAMEWORK_
