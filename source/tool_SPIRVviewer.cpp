@@ -740,17 +740,21 @@ void shaderTool_t::Load(std::string fileName)
 
 		shaderc::Compiler compiler;
 		shaderc::SpvCompilationResult result = compiler.AssembleToSpv(shaderModules.back().spirvSource.c_str(), shaderModules.back().spirvSource.size());
-		std::vector<uint32_t> spv_result(result.cbegin(), result.cend());
+		std::vector<uint32_t> spv_result(result.begin(), result.end());
 
 		// GLSL
 		spirv_cross::CompilerGLSL glsl(spv_result);
 		module.shaderResources = glsl.get_shader_resources();
+		glsl.build_combined_image_samplers();
 		module.glslSource = glsl.compile();
 		if (!module.glslSource.empty())
 			module.glslSource += "\n";
 
 		// HLSL
 		spirv_cross::CompilerHLSL hlsl(spv_result);
+		spirv_cross::CompilerHLSL::Options hlsl_options;
+		hlsl_options.shader_model = 45;
+		hlsl.set_hlsl_options(hlsl_options);
 		module.shaderResources = hlsl.get_shader_resources();
 		module.hlslSource = hlsl.compile();
 		if (!module.hlslSource.empty())
