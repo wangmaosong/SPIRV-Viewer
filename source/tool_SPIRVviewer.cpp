@@ -1022,27 +1022,23 @@ void shaderTool_t::DetermineShaderModuleType(shaderModule_t& module, spv::Execut
 
 std::vector<uint32_t> shaderTool_t::ReadSPIRVFile(const char* fileName)
 {
-	FILE* file = nullptr;
-	fopen_s(&file, fileName, "r+");
-	if (file == nullptr)
-		return std::vector<uint32_t>();
+	FILE* file = fopen(fileName, "rb");
+	if (!file)
+	{
+		fprintf(stderr, "Failed to open SPIR-V file: %s\n", fileName);
+		return {};
+	}
 
 	fseek(file, 0, SEEK_END);
-	size_t size = ftell(file);
-	fseek(file, 0, SEEK_SET);
+	long len = ftell(file) / sizeof(uint32_t);
+	rewind(file);
 
-	unsigned int* inBuffer = (unsigned int*)malloc(size);
-	size_t bytesRead = fread(inBuffer, sizeof(unsigned int), size, file);
+	vector<uint32_t> spirv(len);
+	if (fread(spirv.data(), sizeof(uint32_t), len, file) != size_t(len))
+		spirv.clear();
 
 	fclose(file);
-
-	std::vector<uint32_t> outBuffer;
-
-	for (int bufferIter = 0; bufferIter < bytesRead; bufferIter++)
-	{
-		outBuffer.push_back(inBuffer[bufferIter]);
-	}
-	return outBuffer;
+	return spirv;
 }
 
 void shaderTool_t::ReadVectorSPIRVFile(const char* fileName)
