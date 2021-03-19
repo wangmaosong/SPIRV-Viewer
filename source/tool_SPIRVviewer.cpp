@@ -711,9 +711,12 @@ void shaderTool_t::Load(std::string fileName)
 
 		// HLSL
 		spirv_cross::CompilerHLSL hlsl(spv_result);
+		spirv_cross::CompilerHLSL::Options hlsl_options;
+		hlsl_options.shader_model = 50;
 		module.shaderResources = hlsl.get_shader_resources();
 		module.shaderOptions = hlsl.get_common_options();
 		module.shaderOptions.vulkan_semantics = true;
+		hlsl.set_hlsl_options(hlsl_options);
 		hlsl.set_common_options(module.shaderOptions);
 		module.hlslSource = hlsl.compile();
 
