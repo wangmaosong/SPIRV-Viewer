@@ -28,8 +28,8 @@
 #include <memory>
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
-#include "tool_framework.hpp"
-#include "tool_SPIRVviewer.hpp"
+#include "tool_framework.h"
+#include "tool_SPIRVviewer.h"
 #include <stdlib.h>
 #include <fstream>
 #include <string>
@@ -95,29 +95,21 @@ static void setGUIStyle(void)
 int main(int numArgs, char* arguments[])
 {
 	framework = make_unique<shaderTool_t>();
-	//printf("%i \n", numArgs);
-	//printf("%s \n", arguments[0]);
-	//printf("%s \n", arguments[1]);
 	for (int argIter = 0; argIter < numArgs; argIter++)
 	{
 		if (argIter > 0)
 		{
-			//store the binary path IF the binary was double clicked
 			framework->binaryPath = arguments[1];
 		}
 		else
 		{
-			//get the exe Path
-			//printf("%s \n", arguments[argIter]);
 			framework->resourcePath = arguments[0];
-			//remove the file name and replace it with the resources folder
-			auto position = framework->resourcePath.rfind('bin');
+			auto position = framework->resourcePath.rfind("bin");
             position = framework->resourcePath.rfind('\\', position - 2);
 			if (position != std::string::npos && (position + 1) != std::string::npos)
 			{
 				framework->resourcePath.erase(position + 1);
 				framework->resourcePath += "resources\\";
-				//printf("%s \n", framework->resourcePath.c_str());
 			}
 		}
 	}

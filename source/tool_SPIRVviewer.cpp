@@ -21,8 +21,8 @@
  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "tool_framework.hpp"
-#include "tool_SPIRVviewer.hpp"
+#include "tool_framework.h"
+#include "tool_SPIRVviewer.h"
 #include <algorithm>
 #include <string>
 #include <fstream>
@@ -192,24 +192,24 @@ void shaderTool_t::DrawMenu()
 	{
 		if (ImGui::BeginMenu("Menu"))
 		{
-			/*if (ImGui::MenuItem("New", NULL, nullptr)) {
-			}*/
+			if (ImGui::MenuItem("New", NULL, nullptr)) {
+			}
 			if (ImGui::MenuItem("Open..", NULL, nullptr)) {
 				string p;
 				if (openDialog(p, nullptr)) {
 					this->Load(p);
 				}
 			}
-			/*ImGui::Separator();
+			ImGui::Separator();
 			if (ImGui::MenuItem("Save", NULL, nullptr)) {
-				this->save(fileName.c_str());
+				this->Save(fileName.c_str());
 			}
 			if (ImGui::MenuItem("Save As..", NULL, nullptr)) {
 				string p = fileName;
 				if (saveDialog(p, "shader.json")) {
-					this->save(p);
+					this->Save(p);
 				}
-			}*/
+			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit", NULL, nullptr)) {
 				exit(0);
@@ -304,39 +304,6 @@ void shaderTool_t::DrawShaderTypes()
 			break;
 		}
 	}
-	
-	/*switch (shaderModuleType)
-	{
-	case shaderModuleType_t::vertex:
-		ImGui::Text("vertex shader");
-		break;
-	case shaderModuleType_t::fragment:
-		ImGui::Text("fragment sahder");
-		break;
-	case shaderModuleType_t::geometry:
-		ImGui::Text("geometry");
-		break;
-	case shaderModuleType_t::tessControl:
-		ImGui::Text("tesselation control");
-		break;
-	case shaderModuleType_t::tessEvaluation:
-		ImGui::Text("tesselation evaluation");
-		break;
-	case shaderModuleType_t::compute:
-		ImGui::Text("compute");
-		break;
-	case shaderModuleType_t::kernel:
-		ImGui::Text("kernel");
-		break;
-	case shaderModuleType_t::invalid:
-		ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "invalid shader");
-		break;
-	default:
-		ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "invalid shader");
-		break;
-	}*/
-	
-	//auto blarg = ImGui::ListBox((string("##") + "Shader Module").c_str(), &activeModuleItem, CStrList(shaderModuleTypes).data(), shaderModuleTypes.size());
 }
 
 void shaderTool_t::DrawShaderReflection()
@@ -493,7 +460,6 @@ void shaderTool_t::DrawShaderReflection()
 
 		//shader storage images? //need to look that one up 
 		//i think these can be written to (similar to render targets)
-		shaderModules[currentModule].shaderResources.storage_images;
 		ImGui::TextColored(favColor, "Storage images:");
 		for (unsigned int imageIndex = 0; imageIndex < shaderModules[currentModule].shaderResources.storage_images.size(); imageIndex++)
 		{
@@ -507,7 +473,6 @@ void shaderTool_t::DrawShaderReflection()
 		ImGui::Spacing();
 
 		//shader sub pass inputs
-		shaderModules[currentModule].shaderResources.subpass_inputs;
 		ImGui::TextColored(favColor, "Sub pass inputs:");
 		for (unsigned int subpassIndex = 0; subpassIndex < shaderModules[currentModule].shaderResources.storage_images.size(); subpassIndex++)
 		{
@@ -521,7 +486,6 @@ void shaderTool_t::DrawShaderReflection()
 		ImGui::Spacing();
 
 		//shader uniform buffers
-		shaderModules[currentModule].shaderResources.uniform_buffers;
 		ImGui::TextColored(favColor, "Uniform buffers:");
 		for (unsigned int uniformIndex = 0; uniformIndex < shaderModules[currentModule].shaderResources.storage_images.size(); uniformIndex++)
 		{
@@ -1025,7 +989,8 @@ void shaderTool_t::DetermineShaderModuleType(shaderModule_t& module, spv::Execut
 
 std::vector<uint32_t> shaderTool_t::ReadSPIRVFile(const char* fileName)
 {
-	FILE* file = fopen(fileName, "rb");
+	FILE* file = nullptr;
+	fopen_s(&file, fileName, "rb");
 	if (!file)
 	{
 		fprintf(stderr, "Failed to open SPIR-V file: %s\n", fileName);
@@ -1057,9 +1022,6 @@ void shaderTool_t::ReadVectorSPIRVFile(const char* fileName)
 	unsigned int totalSize = ftell(file);
 	fseek(file, 0, SEEK_SET);
 	unsigned int numInts = totalSize / sizeof(uint32_t);
-	
-	//get the total size of the file
-	//move the cursor back to the beginning
 
 	size_t magicalBullshit = 0;
 	size_t position = 0;
@@ -1091,18 +1053,13 @@ void shaderTool_t::ReadVectorSPIRVFile(const char* fileName)
 				if (feof(file))
 				{
 					//check if end of file was found!
-					//printf("eof found ! \n");
+					printf("eof found ! \n");
 					break;
 				}
 
 				outBuffer.push_back(buffer);
 			}
 
-			/*printf("position (num elements) processed %i \n", position);
-			printf("binary size %i \n", binarySize);
-			printf("bytes read (32 bit ints) %i \n", position * sizeof(uint32_t));*/
-			//if everything is all good create a shader module and push it back :)
-			//binaryList.push_back(outBuffer);
 			shaderModule_t module = {};
 			module.binaryList = std::move(outBuffer);
 			module.moduleType = (shaderModule_t::moduleType_t)stage;			

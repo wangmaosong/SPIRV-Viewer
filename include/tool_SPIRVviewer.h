@@ -28,7 +28,7 @@
 #include <unordered_map>
 #include <string>
 #include <memory>
-#include "tool_framework.hpp"
+#include "tool_framework.h"
 #include <cross/spirv_hlsl.hpp>
 #include <cross/spirv_glsl.hpp>
 #include <cross/spirv_msl.hpp>

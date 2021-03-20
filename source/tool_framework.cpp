@@ -1,4 +1,4 @@
-#include "tool_framework.hpp"
+#include "tool_framework.h"
 #include <nfd.h>
 
 ToolFramework::ToolFramework()
