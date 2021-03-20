@@ -5,7 +5,7 @@ set(PROJECT_LABEL "SPIRV_Viewer")
 
 find_package(OpenGL REQUIRED)
 
-set (OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}../")
+set (OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin/")
 
 set (INCLUDE_DIR "./include")
 set (COMMON_INCLUDE_DIR "./lib/include")

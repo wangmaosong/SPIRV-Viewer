@@ -111,7 +111,7 @@ int main(int numArgs, char* arguments[])
 			//printf("%s \n", arguments[argIter]);
 			framework->resourcePath = arguments[0];
 			//remove the file name and replace it with the resources folder
-			auto position = framework->resourcePath.rfind('\\');
+			auto position = framework->resourcePath.rfind('bin');
             position = framework->resourcePath.rfind('\\', position - 2);
 			if (position != std::string::npos && (position + 1) != std::string::npos)
 			{
