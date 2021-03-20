@@ -104,8 +104,7 @@ int main(int numArgs, char* arguments[])
 		else
 		{
 			framework->resourcePath = arguments[0];
-			auto position = framework->resourcePath.rfind("bin");
-            position = framework->resourcePath.rfind('\\', position - 2);
+			auto position = framework->resourcePath.rfind("bin")-1;
 			if (position != std::string::npos && (position + 1) != std::string::npos)
 			{
 				framework->resourcePath.erase(position + 1);

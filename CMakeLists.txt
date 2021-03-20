@@ -72,7 +72,6 @@ set(CMAKE_MODULE_PATH
 
 set (HEADERS 
 	"${INCLUDE_DIR}/tool_framework.h" 
-	"${INCLUDE_DIR}/resource.h" 
 	"${INCLUDE_DIR}/tool_SPIRVviewer.h")
 
 set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
