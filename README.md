@@ -1,5 +1,5 @@
 # SPIRV-viewer
-![alt tag](https://raw.githubusercontent.com/ziacko/SPIRV-viewer/master/screenShot.png)
+![alt tag](https://github.com/wangmaosong/SPIRV-Viewer/blob/master/screenShot.png?raw=true)
 a tool for viewing SPIRV binaries as GLSL and SPIRV assembly as well as reflection data
 
 Static viewing tool for the SPIRV file format. loads SPIRV binary files from disk.
@@ -24,7 +24,3 @@ Source code is displayed in a text box with GLSL being in the right box and SPIR
 - Storage images
 - Sub pass inputs
 - Uniform buffer
-
-If you are using a .vpsv file then you can change the active shader by clicking on the shader stage you want to view which is displayed as a button on the left side under shader module type. Clicking one one of these will change the active binary being shown
-
-Please note that this library uses a specialized version of shaderc and SPIRV-cross libraries
