@@ -101,6 +101,7 @@ class shaderTool_t : public ToolFramework
 
 	bool CheckShaderType(shaderModule_t& module, shaderc::AssemblyCompilationResult& result);
 	void DetermineShaderModuleType(shaderModule_t& module, spv::ExecutionModel model);
+	void CompileAll(std::vector<uint32_t>& spv, shaderModule_t& module);
 
 	void Save(std::string fileName);
 	void Load(std::string fileName);

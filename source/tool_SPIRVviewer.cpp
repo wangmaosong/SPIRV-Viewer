@@ -645,6 +645,45 @@ void shaderTool_t::Save(std::string fileName)
     }
 }
 
+void shaderTool_t::CompileAll(std::vector<uint32_t>& spv, shaderModule_t& module)
+{
+	// GLSL
+	spirv_cross::CompilerGLSL glsl(spv);
+	module.shaderResources = glsl.get_shader_resources();
+	module.shaderOptions = glsl.get_common_options();
+	module.shaderOptions.vulkan_semantics = true;
+	glsl.set_common_options(module.shaderOptions);
+	module.glslSource = glsl.compile();
+	if (!module.glslSource.empty())
+		module.glslSource += "\n";
+	DetermineShaderModuleType(module, glsl.get_execution_model());
+
+	// HLSL
+	spirv_cross::CompilerHLSL hlsl(spv);
+	spirv_cross::CompilerHLSL::Options hlsl_options;
+	hlsl_options.shader_model = 50;
+	module.shaderResources = hlsl.get_shader_resources();
+	module.shaderOptions = hlsl.get_common_options();
+	module.shaderOptions.vulkan_semantics = true;
+	hlsl.set_hlsl_options(hlsl_options);
+	hlsl.set_common_options(module.shaderOptions);
+	module.hlslSource = hlsl.compile();
+
+	if (!module.hlslSource.empty())
+		module.hlslSource += "\n";
+
+	// MSL
+	spirv_cross::CompilerMSL msl(spv);
+	module.shaderResources = msl.get_shader_resources();
+	module.shaderOptions = msl.get_common_options();
+	module.shaderOptions.vulkan_semantics = true;
+	msl.set_common_options(module.shaderOptions);
+	module.mslSource = msl.compile();
+
+	if (!module.mslSource.empty())
+		module.mslSource += "\n";
+}
+
 void shaderTool_t::Load(std::string fileName)
 {
 	shaderModules.clear();
@@ -662,42 +701,7 @@ void shaderTool_t::Load(std::string fileName)
 		shaderModule_t module = {};
 		std::vector<uint32_t> spv_result(std::move(ReadSPIRVFile(fileName.c_str())));
 
-		// GLSL
-		spirv_cross::CompilerGLSL glsl(spv_result);
-		module.shaderResources = glsl.get_shader_resources();
-		module.shaderOptions = glsl.get_common_options();
-		module.shaderOptions.vulkan_semantics = true;
-		glsl.set_common_options(module.shaderOptions);
-		module.glslSource = glsl.compile();
-		if (!module.glslSource.empty())
-			module.glslSource += "\n";
-		DetermineShaderModuleType(module, glsl.get_execution_model());
-
-		// HLSL
-		spirv_cross::CompilerHLSL hlsl(spv_result);
-		spirv_cross::CompilerHLSL::Options hlsl_options;
-		hlsl_options.shader_model = 50;
-		module.shaderResources = hlsl.get_shader_resources();
-		module.shaderOptions = hlsl.get_common_options();
-		module.shaderOptions.vulkan_semantics = true;
-		hlsl.set_hlsl_options(hlsl_options);
-		hlsl.set_common_options(module.shaderOptions);
-		module.hlslSource = hlsl.compile();
-
-		if (!module.hlslSource.empty())
-			module.hlslSource += "\n";
-
-		// MSL
-		spirv_cross::CompilerMSL msl(spv_result);
-		module.shaderResources = msl.get_shader_resources();
-		module.shaderOptions = msl.get_common_options();
-		module.shaderOptions.vulkan_semantics = true;
-		msl.set_common_options(module.shaderOptions);
-		module.mslSource = msl.compile();
-
-		if (!module.mslSource.empty())
-			module.mslSource += "\n";
-
+		CompileAll(spv_result, module);
 		shaderModules.push_back(module);
 	}
 	else if (IsAsciiSPIRVFile(fileName.c_str()))
@@ -709,30 +713,7 @@ void shaderTool_t::Load(std::string fileName)
 		shaderc::SpvCompilationResult result = compiler.AssembleToSpv(shaderModules.back().spirvSource.c_str(), shaderModules.back().spirvSource.size());
 		std::vector<uint32_t> spv_result(result.begin(), result.end());
 
-		// GLSL
-		spirv_cross::CompilerGLSL glsl(spv_result);
-		module.shaderResources = glsl.get_shader_resources();
-		glsl.build_combined_image_samplers();
-		module.glslSource = glsl.compile();
-		if (!module.glslSource.empty())
-			module.glslSource += "\n";
-
-		// HLSL
-		spirv_cross::CompilerHLSL hlsl(spv_result);
-		spirv_cross::CompilerHLSL::Options hlsl_options;
-		hlsl_options.shader_model = 45;
-		hlsl.set_hlsl_options(hlsl_options);
-		module.shaderResources = hlsl.get_shader_resources();
-		module.hlslSource = hlsl.compile();
-		if (!module.hlslSource.empty())
-			module.hlslSource += "\n";
-
-		// MSL
-		spirv_cross::CompilerMSL msl(spv_result);
-		module.shaderResources = msl.get_shader_resources();
-		module.mslSource = msl.compile();
-		if (!module.mslSource.empty())
-			module.mslSource += "\n";
+		CompileAll(spv_result, module);
 	}
 }
 
