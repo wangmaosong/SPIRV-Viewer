@@ -107,8 +107,6 @@ class shaderTool_t : public ToolFramework
 
 	std::vector<uint32_t> ReadSPIRVFile(const char* fileName);
 
-	void ReadVectorSPIRVFile(const char* fileName);
-
 	bool IsAsciiSPIRVFile(const char* fileName);
 	void ReadFromAsciiSPIRVFile(const char* fileName);
 
